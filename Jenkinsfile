@@ -18,6 +18,7 @@ pipeline {
 		}
 		stage('Deploy nginx/custom'){
 			steps{
+				docker ps --filter "publish=80" -q | xargs -r docker stop
 				sh "docker run -d -p 80:80 nginx/custom:latest"
 			}
 		}
