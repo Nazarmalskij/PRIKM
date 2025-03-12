@@ -16,15 +16,16 @@ pipeline {
                 echo 'Pass'
             }
         }
-        stage('Deploy nginx/custom') {
-            steps {
-                sh 'docker run -d -p 80:80 nginx/custom:latest'
-            }
-        }
-        stage('Stop and redeploy nginx/custom') {
+        stage('Stop existing containers') {
             steps {
                 sh '''
                     docker ps --filter "publish=80" -q | xargs -r docker stop
+                '''
+            }
+        }
+        stage('Deploy nginx/custom') {
+            steps {
+                sh '''
                     docker run -d -p 80:80 nginx/custom:latest
                 '''
             }
