@@ -2,9 +2,19 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Lab_2</title>
+		<title>Lab_2 - Docker & Jenkins Pipeline</title>
 	</head>
 	<body>
-		<h2>Hello from Docker, launched by Jenkins, triggered by GitHub</h2>
+		<h1>Lab_2: Docker Image Built and Deployed by Jenkins</h1>
+		<h2>Pipeline Stages:</h2>
+		<ul>
+			<li><strong>Start:</strong> Lab_2: started by GitHub</li>
+			<li><strong>Image Build:</strong> Docker image built and tagged as <code>nazarmalskij/prikm:latest</code> and <code>nazarmalskij/prikm:$BUILD_NUMBER</code></li>
+			<li><strong>Push to Registry:</strong> Docker image pushed to Docker Hub registry</li>
+			<li><strong>Verify Image:</strong> Docker image verified using <code>docker images</code> and <code>docker inspect</code></li>
+			<li><strong>Deploy Image:</strong> Docker container deployed and running on port 80</li>
+		</ul>
+		<h2>Status:</h2>
+		<p>Hello from Docker, launched by Jenkins, triggered by GitHub!</p>
 	</body>
 </html>
