@@ -15,7 +15,7 @@ pipeline {
         }
         stage('Push to registry') {
             steps {
-                withDockerRegistry([credentialsId: "dckr_pat_GanWk6xmXhcoV3spHxUWEHhB3O0", url: ""]) {
+                withDockerRegistry([credentialsId: "dockerhub_token", url: ""]) {
                     sh "docker push nazarmalskij/prikm:latest"
                     sh "docker push nazarmalskij/prikm:$BUILD_NUMBER"
                 }
