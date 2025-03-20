@@ -12,13 +12,12 @@ pipeline {
         stage('Build and Push Image') {
             steps {
                 script {
-                    sh """
-                        docker build -t $DOCKER_IMAGE:latest .
-                        docker tag $DOCKER_IMAGE:latest $DOCKER_IMAGE:$BUILD_NUMBER
-                        docker login -u \$DOCKERHUB_USER -p \$DOCKERHUB_PASS
-                        docker push $DOCKER_IMAGE:latest
-                        docker push $DOCKER_IMAGE:$BUILD_NUMBER
-                    """
+                    sh "docker build -t $DOCKER_IMAGE:latest ."
+                    sh "docker tag $DOCKER_IMAGE:latest $DOCKER_IMAGE:$BUILD_NUMBER"
+                }
+                withDockerRegistry([credentialsId: 'dockerhub_token', url: '']) {
+                    sh "docker push $DOCKER_IMAGE:latest"
+                    sh "docker push $DOCKER_IMAGE:$BUILD_NUMBER"
                 }
             }
         }
