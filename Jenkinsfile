@@ -1,52 +1,38 @@
 pipeline {
     agent any
-    environment {
-        DOCKER_IMAGE = "nazarmalskij/prikm"
-    }
     stages {
         stage('Start') {
             steps {
                 echo 'Lab_2: started by GitHub'
             }
         }
-        stage('Build and Push Image') {
+        stage('Image build') {
             steps {
-                script {
-                    sh "docker build -t $DOCKER_IMAGE:latest ."
-                    sh "docker tag $DOCKER_IMAGE:latest $DOCKER_IMAGE:$BUILD_NUMBER"
-                }
-                withDockerRegistry([credentialsId: 'dockerhub_token', url: '']) {
-                    sh "docker push $DOCKER_IMAGE:latest"
-                    sh "docker push $DOCKER_IMAGE:$BUILD_NUMBER"
-                }
+                sh "docker build -t prikm:latest ."
+                sh "docker tag prikm nazarmalskij/prikm:latest"
+                sh "docker tag prikm nazarmalskij/prikm:$BUILD_NUMBER"
             }
         }
-        stage('Check Artifacts') {
+        stage('Push to registry') {
             steps {
-                script {
-                    def artifactCount = sh(script: "curl -s https://hub.docker.com/v2/repositories/nazarmalskij/prikm/tags/ | jq '.count'", returnStdout: true).trim()
-                    echo "Current artifact count: ${artifactCount}"
-                    env.ARTIFACT_COUNT = artifactCount
+                withDockerRegistry([credentialsId: "dockerhub_token", url: ""]) {
+                    sh "docker push nazarmalskij/prikm:latest"
+                    sh "docker push nazarmalskij/prikm:$BUILD_NUMBER"
                 }
             }
         }
-        stage('Update Web Page') {
+        stage('Verify Image') {  // Новий стейдж
             steps {
-                sh "sed -i 's/BUILD_NUMBER_ENV/${BUILD_NUMBER}/g; s/ARTIFACT_COUNT_ENV/${env.ARTIFACT_COUNT}/g' index.html"
+                echo 'Verifying Docker image...'
+                sh "docker images | grep nazarmalskij/prikm"
+                sh "docker inspect nazarmalskij/prikm:latest"
             }
         }
-        stage('Deploy') {
+        stage('Deploy image') {
             steps {
-                script {
-                    sh "docker rm -f prikm_container || true"
-                    sh "docker run -d -p 80:80 --name prikm_container $DOCKER_IMAGE:latest"
-                }
+                sh "docker ps -q --filter 'ancestor=nazarmalskij/prikm' | xargs -r docker stop"
+                sh "docker run -d -p 80:80 nazarmalskij/prikm"
             }
-        }
-    }
-    post {
-        always {
-            echo "Pipeline execution finished!"
         }
     }
 }
