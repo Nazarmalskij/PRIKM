@@ -3,31 +3,28 @@ pipeline {
     stages {
         stage('Start') {
             steps {
-                echo 'Lab_1: nginx/custom'
+                echo 'Lab_2: started by GitHub'
             }
         }
-        stage('Build nginx/custom') {
+        stage('Image build') {
             steps {
-                sh 'docker build -t nginx/custom:latest .'
+                sh "docker build -t prikm:latest ."
+                sh "docker tag prikm nazarmalskij/prikm:latest"
+                sh "docker tag prikm nazarmalskij/prikm:$BUILD_NUMBER"
             }
         }
-        stage('Test nginx/custom') {
+        stage('Push to registry') {
             steps {
-                echo 'Pass'
+                withDockerRegistry([credentialsId: "dckr_pat_GanWk6xmXhcoV3spHxUWEHhB3O0", url: ""]) {
+                    sh "docker push nazarmalskij/prikm:latest"
+                    sh "docker push nazarmalskij/prikm:$BUILD_NUMBER"
+                }
             }
         }
-        stage('Stop existing containers') {
+        stage('Deploy image') {
             steps {
-                sh '''
-                    docker ps --filter "publish=80" -q | xargs -r docker stop
-                '''
-            }
-        }
-        stage('Deploy nginx/custom') {
-            steps {
-                sh '''
-                    docker run -d -p 80:80 nginx/custom:latest
-                '''
+                sh "docker ps -q --filter 'ancestor=nazarmalskij/prikm' | xargs -r docker stop"
+                sh "docker run -d -p 80:80 nazarmalskij/prikm"
             }
         }
     }
