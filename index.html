@@ -23,13 +23,11 @@
     <h2>Hello from Docker, launched by Jenkins, triggered by GitHub.</h2>
     <div class="build-info">
         <p>Build Number: <span id="build-number">N/A</span></p>
-        <p>Artifacts on Docker Hub: <span id="artifact-count">N/A</span></p>
     </div>
 
     <script>
-        // Симуляція отримання даних (в реальному випадку можна отримувати з API).
+        // Відображення номера білду
         document.getElementById('build-number').innerText = "BUILD_NUMBER_ENV";
-        document.getElementById('artifact-count').innerText = "ARTIFACT_COUNT_ENV";
     </script>
 </body>
 </html>
