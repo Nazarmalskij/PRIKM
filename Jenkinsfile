@@ -1,3 +1,23 @@
+properties {
+    office365ConnectorWebhooks {
+        webhooks {
+            webhook {
+                name('Lab_3')
+                url('https://lpnu.webhook.office.com/webhookb2/3b7cf814-63b1-4da1-bcbe-cf6ff9cb00d9@7631cd62-5187-4e15-8b8e-ef653e366e7a/JenkinsCI/12d804e3988046e18a67b1d19d6c1902/824a2990-6ede-4f3c-9abb-5d0c624e0ec3/V2fjS9FKL-2EWFboJYOwMoKoclvTbd4EjA2vBAzvSOEdc1')
+                startNotification(false)
+                notifySuccess(true)
+                notifyAborted(false)
+                notifyNotBuilt(false)
+                notifyUnstable(true)
+                notifyFailure(true)
+                notifyBackToNormal(true)
+                notifyRepeatedFailure(false)
+                timeout(30000)
+            }
+        }
+    }
+}
+
 pipeline {
     agent any
     environment {
